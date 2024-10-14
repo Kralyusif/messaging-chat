@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to messaging app</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: red;
+            color: #444;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #fff;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+            margin-bottom: 40px;
+        }
+        #chatContainer {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            transition: transform 0.2s;
+        }
+        #chatContainer:hover {
+            transform: scale(1.02);
+        }
+        #messages {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 10px;
+            height: 300px;
+            overflow-y: scroll;
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .message {
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 80%;
+            animation: fadeIn 0.5s;
+        }
+        .message:last-child {
+            margin-bottom: 0;
+        }
+        .message.user {
+            background-color: #007BFF;
+            color: white;
+            align-self: flex-end;
+        }
+        .message.other {
+            background-color: #E1E1E1;
+            color: black;
+            align-self: flex-start;
+        }
+        input[type="text"] {
+            width: calc(100% - 90px);
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-right: 10px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus {
+            border-color: #007BFF;
+            outline: none;
+        }
+        button {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007BFF;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+        .username-input {
+            margin-bottom: 10px;
+        }
+        .notification {
+            color: #f00;
+            margin: 10px 0;
+            text-align: center;
+            font-weight: bold;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        .chat-area {
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
+</head>
+<body>
+    <h1>Message app</h1>
+    
+    <div id="chatContainer">
+        <div class="username-input">
+            <label for="username">Please Enter Your Name:</label>
+            <input type="text" id="username" placeholder="Whats your name..." />
+            <button id="setNameButton">Set</button>
+        </div>
+        <div class="notification" id="usernameNotification"></div>
+        
+        <div id="messages" class="chat-area"></div>
+        
+        <input type="text" id="message" placeholder="Message..." disabled />
+        <button id="sendButton" disabled>Sumbit</button>
+    </div>
+
+    <script>
+        let messages = [];
+        let username = '';
+
+        function setUsername() {
+            const usernameInput = document.getElementById("username");
+            username = usernameInput.value.trim();
+            const notification = document.getElementById("usernameNotification");
+
+            if (username) {
+                usernameInput.disabled = true; 
+                document.getElementById("setNameButton").disabled = true; 
+                document.getElementById("message").disabled = false;
+                document.getElementById("sendButton").disabled = false; 
+                notification.textContent = `The chat is unlocked look at the chat ${username}! You are ready to send a message.`;
+            } else {
+                notification.textContent = "Please Enter Your Name.";
+            }
+        }
+
+        function sendMessage() {
+            const messageInput = document.getElementById("message");
+            const message = messageInput.value.trim();
+
+            if (message) {
+                messages.push({ text: `${username}: ${message}`, sender: 'user' });
+                messageInput.value = '';
+                displayMessages();
+            }
+        }
+
+        function displayMessages() {
+            const messagesDiv = document.getElementById("messages");
+            messagesDiv.innerHTML = ''; 
+
+            messages.forEach(msg => {
+                const div = document.createElement("div");
+                div.className = "message " + msg.sender; 
+                div.textContent = msg.text; 
+                messagesDiv.appendChild(div); 
+            });
+
+            messagesDiv.scrollTop = messagesDiv.scrollHeight; 
+        }
+
+        document.getElementById("setNameButton").addEventListener("click", setUsername);
+        document.getElementById("sendButton").addEventListener("click", sendMessage);
+
+        document.getElementById("message").addEventListener("keypress", function (event) {
+            if (event.key === "Enter") {
+                sendMessage();
+                event.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>
